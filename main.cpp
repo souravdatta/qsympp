@@ -56,7 +56,7 @@ int main()
     layer.h(2);
     layer.h(1);
     auto q0 = qsym::Qubit::Q0;
-    auto sv3 = layer.state_vector(tensor_product(q0, tensor_product(q0, q0)));
+    auto sv3 = layer.state_vector(qsym::ground_qubits(3));
     auto counts3 = qsym::counts(sv3);
     for (auto m : counts3)
     {

@@ -128,6 +128,19 @@ namespace qsym
         return count_map;
     }
 
+    cmatrix ground_qubits(size n)
+    {
+        auto qbit = Qubit::Q0;
+        size i = 0;
+
+        while (i++ < n - 1)
+        {
+            qbit = tensor_product(qbit, Qubit::Q0);
+        }
+
+        return qbit;
+    }
+
 }
 
 #endif
