@@ -13,9 +13,9 @@ namespace qsym
     public:
         Layer() = delete;
 
-        Layer(size n) : _circuit_depth{n}
+        Layer(size n) : _depth{n}
         {
-            for (size i = 0; i < _circuit_depth; i++)
+            for (size i = 0; i < _depth; i++)
             {
                 matrices.push_back(identity(2));
             }
@@ -23,25 +23,15 @@ namespace qsym
 
         void set_matrix(size index, const cmatrix &mat)
         {
-            if (index >= 0 && index < _circuit_depth)
+            if ((index >= 0) && (index < _depth))
             {
                 matrices[index] = mat;
             }
         }
 
-        void x(size index)
-        {
-            set_matrix(index, Matrix::X);
-        }
-
-        void h(size index)
-        {
-            set_matrix(index, Matrix::H);
-        }
-
         cmatrix get_matrix(size index)
         {
-            if (index >= 0 && index < _circuit_depth)
+            if ((index >= 0) && (index < _depth))
             {
                 return matrices[index];
             }
@@ -51,10 +41,10 @@ namespace qsym
 
         cmatrix operator_matrix() const
         {
-            if (_circuit_depth <= 0)
+            if (_depth <= 0)
                 return identity(2);
 
-            if (_circuit_depth == 1)
+            if (_depth == 1)
                 return matrices[0];
 
             auto start = matrices[0];
@@ -70,10 +60,94 @@ namespace qsym
 
     private:
         std::vector<cmatrix> matrices;
-        size _circuit_depth;
+        size _depth;
     };
 
-    class Circuit;
+    class Circuit
+    {
+    public:
+        Circuit() = delete;
+
+        Circuit(size depth) : _depth{depth}, _last_layer{0}
+        {
+        }
+
+        void set_matrix(size index, const cmatrix &mat)
+        {
+            if ((index < 0) || (index >= _depth))
+                return;
+
+            auto imat = identity(2);
+
+            bool set = false;
+            for (size i = 0; i < _layers.size(); i++)
+            {
+                Layer &layer = _layers[i];
+                if (layer.get_matrix(index) == imat)
+                {
+                    if (mat != imat)
+                    {
+                        layer.set_matrix(index, mat);
+                    }
+                    set = true;
+                    break;
+                }
+            }
+
+            if (!set)
+            {
+                _layers.push_back(Layer{_depth});
+                _layers[_layers.size() - 1].set_matrix(index, mat);
+            }
+        }
+
+        void x(size index)
+        {
+            set_matrix(index, Matrix::X);
+        }
+
+        void h(size index)
+        {
+            set_matrix(index, Matrix::H);
+        }
+
+        void draw()
+        {
+            auto imat = identity(2);
+            size layer_count = _layers.size();
+
+            for (size i = 0; i < _depth; ++i)
+            {
+                for (size j = 0; j < layer_count; ++j)
+                {
+                    auto mat = _layers[j].get_matrix(i);
+                    if (mat == Matrix::H)
+                    {
+                        std::cout << "H\t";
+                    }
+                    else if (mat == Matrix::X)
+                    {
+                        std::cout << "X\t";
+                    }
+                    else if (mat == imat)
+                    {
+                        std::cout << "I\t";
+                    }
+                    else
+                    {
+                        std::cout << "Matrix[" << mat.rows() << "x" << mat.cols() << "]\t";
+                    }
+                }
+
+                std::cout << "\n";
+            }
+        }
+
+    private:
+        size _depth;
+        size _last_layer;
+        std::vector<Layer> _layers;
+    };
 
     class SVSimulator;
 }

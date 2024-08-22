@@ -51,17 +51,21 @@ int main()
 
     std::cout << "==============\n";
 
-    qsym::Layer layer{3};
-    layer.x(0);
-    layer.h(2);
-    layer.h(1);
-    auto q0 = qsym::Qubit::Q0;
-    auto sv3 = layer.state_vector(qsym::ground_qubits(3));
-    auto counts3 = qsym::counts(sv3);
-    for (auto m : counts3)
-    {
-        std::cout << m.first << " => " << m.second << "\n";
-    }
+    auto mt1 = qsym::Matrix::X;
+    auto mt2 = qsym::Matrix::X;
+    std::cout << "mt1 == mt2 " << (mt1 == mt2) << "\n";
+    std::cout << "mt1 != H " << (mt1 != qsym::Matrix::H) << "\n";
+
+    std::cout << "==============\n";
+
+    qsym::Circuit c{3};
+    c.x(0);
+    c.x(1);
+    c.h(0);
+    c.x(1);
+
+    c.draw();
+
     // // TODO: noting down the API
     // qsym::Circuit<3> circuit;
     // circuit.h(0);

@@ -77,6 +77,22 @@ namespace qsym
             return _cols;
         }
 
+        bool operator==(const cmatrix &other) const
+        {
+            if ((_rows == other.rows()) &&
+                (_cols == other.cols()))
+            {
+                return _mat == other._mat;
+            }
+
+            return false;
+        }
+
+        bool operator!=(const cmatrix &other) const
+        {
+            return !(*this == other);
+        }
+
     private:
         size _rows, _cols;
         std::vector<std::vector<std::complex<double>>> _mat;
