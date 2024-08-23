@@ -3,3 +3,4 @@ qsym
 *.*~
 *.out
 .vscode
+tests/*_tests
