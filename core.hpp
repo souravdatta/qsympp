@@ -8,6 +8,7 @@
 #include <random>
 #include <optional>
 #include <map>
+#include <cmath>
 
 namespace qsym
 {
@@ -15,14 +16,24 @@ namespace qsym
     {
     public:
         const static cmatrix X;
+        const static cmatrix Y;
+        const static cmatrix Z;
         const static cmatrix H;
+        const static cmatrix S;
+        const static cmatrix T;
     };
 
-    const cmatrix Matrix::X{2, 2, {CMPLX(0, 0), CMPLX(1, 0), CMPLX(1, 0), CMPLX(1, 1)}};
+    const cmatrix Matrix::X{"X", 2, 2, {CMPLX(0, 0), CMPLX(1, 0), CMPLX(1, 0), CMPLX(0, 0)}};
+    const cmatrix Matrix::Y{"Y", 2, 2, {CMPLX(0, 0), CMPLX(0, -1), CMPLX(0, 1), CMPLX(0, 0)}};
+    const cmatrix Matrix::Z{"Z", 2, 2, {CMPLX(1, 0), CMPLX(0, 0), CMPLX(0, 0), CMPLX(-1, 0)}};
 
     const double h_factor = 1.0 / std::sqrt(2);
 
-    const cmatrix Matrix::H{2, 2, {CMPLX(h_factor, 0), CMPLX(h_factor, 0), CMPLX(h_factor, 0), CMPLX(-1 * h_factor, 1)}};
+    const cmatrix Matrix::H{
+        "H",
+        2,
+        2,
+        {CMPLX(h_factor, 0), CMPLX(h_factor, 0), CMPLX(h_factor, 0), CMPLX(-1 * h_factor, 0)}};
 
     class Qubit
     {

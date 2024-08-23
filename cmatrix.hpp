@@ -2,6 +2,7 @@
 #define __CMATRIX_HPP__
 
 #include <string>
+#include <sstream>
 #include <complex>
 #include <iostream>
 #include <vector>
@@ -21,12 +22,23 @@ namespace qsym
     public:
         cmatrix() = delete;
 
-        cmatrix(size rn, size cn) : _rows{rn}, _cols{cn}
+        cmatrix(size rn, size cn) : cmatrix("", rn, cn)
+        {
+        }
+
+        cmatrix(const std::string &name, size rn, size cn) : _rows{rn}, _cols{cn}, _name{name}
         {
             reset();
         }
 
-        cmatrix(size rn, size cn, std::vector<std::complex<double>> nums) : _rows{rn}, _cols{cn}
+        cmatrix(size rn, size cn, std::vector<std::complex<double>> nums) : cmatrix("", rn, cn, nums)
+        {
+        }
+
+        cmatrix(const std::string &name,
+                size rn,
+                size cn,
+                std::vector<std::complex<double>> nums) : _name{name}, _rows{rn}, _cols{cn}
         {
             if (nums.size() != _rows * _cols)
                 return;
@@ -93,14 +105,31 @@ namespace qsym
             return !(*this == other);
         }
 
+        std::string name() const
+        {
+            if (_name == "")
+            {
+                std::stringstream ss;
+                ss << "Matrix("
+                   << _rows
+                   << "x"
+                   << _cols
+                   << ")";
+                return ss.str();
+            }
+
+            return _name;
+        }
+
     private:
         size _rows, _cols;
+        std::string _name;
         std::vector<std::vector<std::complex<double>>> _mat;
     };
 
     cmatrix identity(size n)
     {
-        cmatrix mat{n, n};
+        cmatrix mat{"I", n, n};
         for (size i = 0; i < n; i++)
         {
             mat.set(i, i, CMPLX(1, 0));

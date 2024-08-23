@@ -17,7 +17,7 @@ namespace qsym
         {
             for (size i = 0; i < _depth; i++)
             {
-                matrices.push_back(identity(2));
+                _matrices.push_back(identity(2));
             }
         }
 
@@ -25,7 +25,7 @@ namespace qsym
         {
             if ((index >= 0) && (index < _depth))
             {
-                matrices[index] = mat;
+                _matrices[index] = mat;
             }
         }
 
@@ -33,7 +33,7 @@ namespace qsym
         {
             if ((index >= 0) && (index < _depth))
             {
-                return matrices[index];
+                return _matrices[index];
             }
 
             return identity(2);
@@ -45,10 +45,17 @@ namespace qsym
                 return identity(2);
 
             if (_depth == 1)
-                return matrices[0];
+                return _matrices[0];
 
-            auto start = matrices[0];
-            return std::accumulate(matrices.begin() + 1, matrices.end(), start, [=](auto m1, auto m2)
+            std::vector<cmatrix> rev_layer;
+            for (cmatrix c : _matrices)
+            {
+                rev_layer.push_back(c);
+            }
+            std::reverse(rev_layer.begin(), rev_layer.end());
+
+            auto start = rev_layer[0];
+            return std::accumulate(rev_layer.begin() + 1, rev_layer.end(), start, [=](auto m1, auto m2)
                                    { return tensor_product(m1, m2); });
         }
 
@@ -59,7 +66,7 @@ namespace qsym
         }
 
     private:
-        std::vector<cmatrix> matrices;
+        std::vector<cmatrix> _matrices;
         size _depth;
     };
 
@@ -121,26 +128,23 @@ namespace qsym
                 for (size j = 0; j < layer_count; ++j)
                 {
                     auto mat = _layers[j].get_matrix(i);
-                    if (mat == Matrix::H)
-                    {
-                        std::cout << "H\t";
-                    }
-                    else if (mat == Matrix::X)
-                    {
-                        std::cout << "X\t";
-                    }
-                    else if (mat == imat)
-                    {
-                        std::cout << "I\t";
-                    }
-                    else
-                    {
-                        std::cout << "Matrix[" << mat.rows() << "x" << mat.cols() << "]\t";
-                    }
+                    std::cout << mat.name() << "\t";
                 }
 
                 std::cout << "\n";
             }
+        }
+
+        cmatrix state_vector(const cmatrix &mat) const
+        {
+            return std::accumulate(
+                _layers.begin(),
+                _layers.end(),
+                mat,
+                [=](const cmatrix &m, const Layer &layer) -> cmatrix
+                {
+                    return layer.state_vector(m);
+                });
         }
 
     private:
@@ -148,8 +152,6 @@ namespace qsym
         size _last_layer;
         std::vector<Layer> _layers;
     };
-
-    class SVSimulator;
 }
 
 #endif
