@@ -13,6 +13,12 @@
 #define CMPLX(X, Y) \
     std::complex<double> { (X), (Y) }
 
+#define CMPLXR(X) \
+    std::complex<double> { (X), 0 }
+
+#define CMPLXI(X) \
+    std::complex<double> { 0, (X) }
+
 namespace qsym
 {
     using size = unsigned long;
