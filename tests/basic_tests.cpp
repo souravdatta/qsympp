@@ -104,7 +104,7 @@ public:
         auto r = qsym::tensor_product(qsym::Qubit::Q0, qsym::Qubit::Q1);
         UT_ASSERT(r.rows() == 4);
         UT_ASSERT(r.cols() == 1);
-        UT_ASSERT(r.at(0, 1) == CMPLX(1, 0));
+        UT_ASSERT(r.at(1, 0) == CMPLX(1, 0));
         for (int i = 0; i < r.cols(); i++)
         {
             if (i == 1)
@@ -118,7 +118,7 @@ public:
         auto r = qsym::tensor_product(qsym::Qubit::Q1, qsym::Qubit::Q0);
         UT_ASSERT(r.rows() == 4);
         UT_ASSERT(r.cols() == 1);
-        UT_ASSERT(r.at(0, 2) == CMPLX(1, 0));
+        UT_ASSERT(r.at(2, 0) == CMPLX(1, 0));
         for (int i = 0; i < r.cols(); i++)
         {
             if (i == 2)
@@ -132,7 +132,7 @@ public:
         auto r = qsym::tensor_product(qsym::Qubit::Q1, qsym::Qubit::Q1);
         UT_ASSERT(r.rows() == 4);
         UT_ASSERT(r.cols() == 1);
-        UT_ASSERT(r.at(0, 3) == CMPLX(1, 0));
+        UT_ASSERT(r.at(3, 0) == CMPLX(1, 0));
         for (int i = 0; i < r.cols(); i++)
         {
             if (i == 3)
